@@ -1,0 +1,48 @@
+import requests
+import time
+
+API_KEY = 'eigen alphavantage api key hier'
+TELEGRAM_TOKEN = 'plak hier je eigen telegram token'
+CHAT_ID = 'eigen chat ID'
+SYMBOLS = {
+    'AAPL': (190, 200),  # Voorbeeld: (min_prijs, max_prijs)
+    'GOOGL': (1500, 1600),
+    'AMZN': (3000, 3100),
+    'TSLA': (600, 700),
+    'MSFT': (200, 220)
+}
+
+def get_stock_price(symbol):
+    url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=eigen API key hier'
+    response = requests.get(url)
+    data = response.json()
+    if 'Global Quote' in data:
+        price = float(data['Global Quote']['05. price'])
+        return price
+    else:
+        print(f'Error fetching data for {symbol}')
+        return None
+
+def send_telegram_message(message):
+    url = f'https://api.telegram.org/bot/eigen API key hier/sendMessage'
+    payload = {
+        'chat_id': eigen CHAT ID,
+        'text': message
+    }
+    requests.post(url, data=payload)
+
+def check_prices():
+    for symbol, (min_price, max_price) in SYMBOLS.items():
+        price = get_stock_price(symbol)
+        if price is not None:
+            print(f'The current price of {symbol} is {price}')
+            if min_price <= price <= max_price:
+                send_telegram_message(f'Handel papa! De prijs van {symbol} is nu {price}, kopen dus!')
+
+def main():
+    while True:
+        check_prices()
+        time.sleep(60)  # Controleer elke minuut
+
+if __name__ == '__main__':
+    main()
